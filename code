@@ -1,0 +1,52 @@
+#include <Adafruit_GFX.h>
+#include <Adafruit_ST7735.h>
+#include <SPI.h>
+
+#define TFT_CS 5
+#define TFT_RST 15
+#define TFT_DC 32
+#define TFT_MOSI 23
+#define TFT_SCLK 18
+
+Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
+
+void setup(void) {
+  Serial.begin(115200);
+  tft.initR(INITR_BLACKTAB);
+  Serial.println("Initialized");
+
+  tft.fillScreen(ST77XX_BLACK);
+  int w = tft.width();
+  int h = tft.height();
+  Serial.print("width = ");
+  Serial.println(w);
+  Serial.print("height = ");
+  Serial.println(h);
+}
+
+void loop() {
+  int w = tft.width();
+  int h = tft.height();
+
+  // Custom RGB565 colors for a rainbow effect
+  uint16_t rainbowColors[] = {
+    0xF800, 0xFD20, 0xFFE0, 0x07E0, 0x001F, 0xF81F, 0xF81F
+  };
+
+  tft.fillScreen(ST77XX_BLACK);
+  tft.setTextColor(ST77XX_WHITE);
+  tft.setTextSize(2);
+
+  for (int colorIndex = 0; colorIndex < 7; colorIndex++) {
+    uint16_t bgColor = rainbowColors[(colorIndex + 3) % 7];  // Background color from the rainbow
+    uint16_t textColor = rainbowColors[colorIndex];           // Text color from the rainbow
+
+    tft.fillScreen(bgColor);
+
+    tft.setCursor(20, 80);
+    tft.setTextColor(textColor);
+    tft.print("");
+
+    delay(1000);
+  }
+}
